@@ -1,0 +1,176 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 900px;
+            height: 500px;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+        #loadingBar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width: 900px;
+            height: 500px;
+            background-color:rgba(200,200,200,0.8);
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+            opacity:1;
+        }
+
+        #bar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width:20px;
+            height:20px;
+            margin:auto auto auto auto;
+            border-radius:11px;
+            border:2px solid rgba(30,30,30,0.05);
+            background: rgb(0, 173, 246); /* Old browsers */
+            box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+        }
+
+        #border {
+            position:absolute;
+            top:10px;
+            left:10px;
+            width:500px;
+            height:23px;
+            margin:auto auto auto auto;
+            box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+            border-radius:10px;
+        }
+
+        #text {
+            position:absolute;
+            top:8px;
+            left:530px;
+            width:30px;
+            height:50px;
+            margin:auto auto auto auto;
+            font-size:22px;
+            color: #000000;
+        }
+
+        div.outerBorder {
+            position:relative;
+            top:400px;
+            width:600px;
+            height:44px;
+            margin:auto auto auto auto;
+            border:8px solid rgba(0,0,0,0.1);
+            background: rgb(252,252,252); /* Old browsers */
+            background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+            background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+            border-radius:72px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+<div id="loadingBar">
+    <div class="outerBorder">
+        <div id="text">0%</div>
+        <div id="border">
+            <div id="bar"></div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"id": "(and", "label": "(and", "shape": "dot", "size": 10}, {"id": "models", "label": "models", "shape": "dot", "size": 10}, {"id": "algorithms", "label": "algorithms", "shape": "dot", "size": 10}, {"id": "(for", "label": "(for", "shape": "dot", "size": 10}, {"id": "linguistics", "label": "linguistics", "shape": "dot", "size": 10}, {"id": "instance,", "label": "instance,", "shape": "dot", "size": 10}, {"id": "biology", "label": "biology", "shape": "dot", "size": 10}, {"id": "(n", "label": "(n", "shape": "dot", "size": 10}, {"id": "a", "label": "a", "shape": "dot", "size": 10}, {"id": "\u2212", "label": "\u2212", "shape": "dot", "size": 10}, {"id": "1)\u2013order", "label": "1)\u2013order", "shape": "dot", "size": 10}, {"id": "Markov", "label": "Markov", "shape": "dot", "size": 10}, {"id": "An", "label": "An", "shape": "dot", "size": 10}, {"id": "shingles", "label": "shingles", "shape": "dot", "size": 10}, {"id": "n-gram", "label": "n-gram", "shape": "dot", "size": 10}, {"id": "model.[2]", "label": "model.[2]", "shape": "dot", "size": 10}, {"id": "The", "label": "The", "shape": "dot", "size": 10}, {"id": "speech.", "label": "speech.", "shape": "dot", "size": 10}, {"id": "items", "label": "items", "shape": "dot", "size": 10}, {"id": "application.", "label": "application.", "shape": "dot", "size": 10}, {"id": "n-grams", "label": "n-grams", "shape": "dot", "size": 10}, {"id": "Two", "label": "Two", "shape": "dot", "size": 10}, {"id": "compression.", "label": "compression.", "shape": "dot", "size": 10}, {"id": "benefits", "label": "benefits", "shape": "dot", "size": 10}, {"id": "When", "label": "When", "shape": "dot", "size": 10}, {"id": "corpus.", "label": "corpus.", "shape": "dot", "size": 10}, {"id": "the", "label": "the", "shape": "dot", "size": 10}, {"id": "is", "label": "is", "shape": "dot", "size": 10}, {"id": "contiguous", "label": "contiguous", "shape": "dot", "size": 10}, {"id": "from", "label": "from", "shape": "dot", "size": 10}, {"id": "given", "label": "given", "shape": "dot", "size": 10}, {"id": "text", "label": "text", "shape": "dot", "size": 10}, {"id": "type", "label": "type", "shape": "dot", "size": 10}, {"id": "such", "label": "such", "shape": "dot", "size": 10}, {"id": "sequence", "label": "sequence", "shape": "dot", "size": 10}, {"id": "of", "label": "of", "shape": "dot", "size": 10}, {"id": "n,", "label": "n,", "shape": "dot", "size": 10}, {"id": "model", "label": "model", "shape": "dot", "size": 10}, {"id": "with", "label": "with", "shape": "dot", "size": 10}, {"id": "well-understood", "label": "well-understood", "shape": "dot", "size": 10}, {"id": "according", "label": "according", "shape": "dot", "size": 10}, {"id": "pairs", "label": "pairs", "shape": "dot", "size": 10}, {"id": "to", "label": "to", "shape": "dot", "size": 10}, {"id": "that", "label": "that", "shape": "dot", "size": 10}, {"id": "also", "label": "also", "shape": "dot", "size": 10}, {"id": "may", "label": "may", "shape": "dot", "size": 10}, {"id": "be", "label": "be", "shape": "dot", "size": 10}, {"id": "an", "label": "an", "shape": "dot", "size": 10}, {"id": "probability,", "label": "probability,", "shape": "dot", "size": 10}, {"id": "analysis),", "label": "analysis),", "shape": "dot", "size": 10}, {"id": "and", "label": "and", "shape": "dot", "size": 10}, {"id": "data", "label": "data", "shape": "dot", "size": 10}, {"id": "simplicity", "label": "simplicity", "shape": "dot", "size": 10}, {"id": "scalability", "label": "scalability", "shape": "dot", "size": 10}, {"id": "are", "label": "are", "shape": "dot", "size": 10}, {"id": "typically", "label": "typically", "shape": "dot", "size": 10}, {"id": "collected", "label": "collected", "shape": "dot", "size": 10}, {"id": "words,", "label": "words,", "shape": "dot", "size": 10}, {"id": "now", "label": "now", "shape": "dot", "size": 10}, {"id": "them)", "label": "them)", "shape": "dot", "size": 10}, {"id": "base", "label": "base", "shape": "dot", "size": 10}, {"id": "or", "label": "or", "shape": "dot", "size": 10}, {"id": "can", "label": "can", "shape": "dot", "size": 10}, {"id": "phonemes,", "label": "phonemes,", "shape": "dot", "size": 10}, {"id": "called", "label": "called", "shape": "dot", "size": 10}, {"id": "biological", "label": "biological", "shape": "dot", "size": 10}, {"id": "computational", "label": "computational", "shape": "dot", "size": 10}, {"id": "store", "label": "store", "shape": "dot", "size": 10}, {"id": "communication", "label": "communication", "shape": "dot", "size": 10}, {"id": "theory,", "label": "theory,", "shape": "dot", "size": 10}, {"id": "processing),", "label": "processing),", "shape": "dot", "size": 10}, {"id": "context", "label": "context", "shape": "dot", "size": 10}, {"id": "more", "label": "more", "shape": "dot", "size": 10}, {"id": "speech", "label": "speech", "shape": "dot", "size": 10}, {"id": "efficiently.", "label": "efficiently.", "shape": "dot", "size": 10}, {"id": "up", "label": "up", "shape": "dot", "size": 10}, {"id": "enabling", "label": "enabling", "shape": "dot", "size": 10}, {"id": "tradeoff,", "label": "tradeoff,", "shape": "dot", "size": 10}, {"id": "small", "label": "small", "shape": "dot", "size": 10}, {"id": "experiments", "label": "experiments", "shape": "dot", "size": 10}, {"id": "fields", "label": "fields", "shape": "dot", "size": 10}, {"id": "for", "label": "for", "shape": "dot", "size": 10}, {"id": "predicting", "label": "predicting", "shape": "dot", "size": 10}, {"id": "form", "label": "form", "shape": "dot", "size": 10}, {"id": "sample", "label": "sample", "shape": "dot", "size": 10}, {"id": "in", "label": "in", "shape": "dot", "size": 10}, {"id": "item", "label": "item", "shape": "dot", "size": 10}, {"id": "used", "label": "used", "shape": "dot", "size": 10}, {"id": "statistical", "label": "statistical", "shape": "dot", "size": 10}, {"id": "next", "label": "next", "shape": "dot", "size": 10}, {"id": "n", "label": "n", "shape": "dot", "size": 10}, {"id": "language", "label": "language", "shape": "dot", "size": 10}, {"id": "probabilistic", "label": "probabilistic", "shape": "dot", "size": 10}, {"id": "natural", "label": "natural", "shape": "dot", "size": 10}, {"id": "larger", "label": "larger", "shape": "dot", "size": 10}, {"id": "letters,", "label": "letters,", "shape": "dot", "size": 10}, {"id": "syllables,", "label": "syllables,", "shape": "dot", "size": 10}, {"id": "words", "label": "words", "shape": "dot", "size": 10}, {"id": "widely", "label": "widely", "shape": "dot", "size": 10}, {"id": "\u2013", "label": "\u2013", "shape": "dot", "size": 10}, {"id": "scale", "label": "scale", "shape": "dot", "size": 10}, {"id": "space\u2013time", "label": "space\u2013time", "shape": "dot", "size": 10}, {"id": "use", "label": "use", "shape": "dot", "size": 10}]);
+        edges = new vis.DataSet([{"arrows": "to", "from": "(and", "to": "models", "value": 1, "weight": 1}, {"arrows": "to", "from": "(and", "to": "algorithms", "value": 1, "weight": 1}, {"arrows": "to", "from": "(for", "to": "linguistics", "value": 1, "weight": 1}, {"arrows": "to", "from": "(for", "to": "instance,", "value": 2, "weight": 1}, {"arrows": "to", "from": "(for", "to": "biology", "value": 1, "weight": 1}, {"arrows": "to", "from": "(n", "to": "a", "value": 1, "weight": 1}, {"arrows": "to", "from": "(n", "to": "\u2212", "value": 1, "weight": 1}, {"arrows": "to", "from": "1)\u2013order", "to": "\u2212", "value": 1, "weight": 1}, {"arrows": "to", "from": "1)\u2013order", "to": "Markov", "value": 1, "weight": 1}, {"arrows": "to", "from": "An", "to": "shingles", "value": 1, "weight": 1}, {"arrows": "to", "from": "An", "to": "n-gram", "value": 1, "weight": 1}, {"arrows": "to", "from": "Markov", "to": "1)\u2013order", "value": 1, "weight": 1}, {"arrows": "to", "from": "Markov", "to": "model.[2]", "value": 1, "weight": 1}, {"arrows": "to", "from": "The", "to": "speech.", "value": 1, "weight": 1}, {"arrows": "to", "from": "The", "to": "items", "value": 1, "weight": 1}, {"arrows": "to", "from": "The", "to": "application.", "value": 1, "weight": 1}, {"arrows": "to", "from": "The", "to": "n-grams", "value": 1, "weight": 1}, {"arrows": "to", "from": "Two", "to": "compression.", "value": 1, "weight": 1}, {"arrows": "to", "from": "Two", "to": "benefits", "value": 1, "weight": 1}, {"arrows": "to", "from": "When", "to": "corpus.", "value": 1, "weight": 1}, {"arrows": "to", "from": "When", "to": "the", "value": 1, "weight": 1}, {"arrows": "to", "from": "a", "to": "is", "value": 2, "weight": 1}, {"arrows": "to", "from": "a", "to": "contiguous", "value": 1, "weight": 1}, {"arrows": "to", "from": "a", "to": "from", "value": 2, "weight": 1}, {"arrows": "to", "from": "a", "to": "given", "value": 1, "weight": 1}, {"arrows": "to", "from": "a", "to": "text", "value": 1, "weight": 1}, {"arrows": "to", "from": "a", "to": "type", "value": 1, "weight": 1}, {"arrows": "to", "from": "a", "to": "such", "value": 1, "weight": 1}, {"arrows": "to", "from": "a", "to": "sequence", "value": 1, "weight": 1}, {"arrows": "to", "from": "a", "to": "of", "value": 1, "weight": 1}, {"arrows": "to", "from": "a", "to": "(n", "value": 1, "weight": 1}, {"arrows": "to", "from": "a", "to": "n,", "value": 1, "weight": 1}, {"arrows": "to", "from": "a", "to": "model", "value": 1, "weight": 1}, {"arrows": "to", "from": "a", "to": "with", "value": 1, "weight": 1}, {"arrows": "to", "from": "a", "to": "well-understood", "value": 1, "weight": 1}, {"arrows": "to", "from": "according", "to": "pairs", "value": 1, "weight": 1}, {"arrows": "to", "from": "according", "to": "to", "value": 1, "weight": 1}, {"arrows": "to", "from": "algorithms", "to": "(and", "value": 1, "weight": 1}, {"arrows": "to", "from": "algorithms", "to": "that", "value": 1, "weight": 1}, {"arrows": "to", "from": "also", "to": "may", "value": 1, "weight": 1}, {"arrows": "to", "from": "also", "to": "be", "value": 1, "weight": 1}, {"arrows": "to", "from": "an", "to": "probability,", "value": 1, "weight": 1}, {"arrows": "to", "from": "an", "to": "n-gram", "value": 1, "weight": 1}, {"arrows": "to", "from": "analysis),", "to": "sequence", "value": 1, "weight": 1}, {"arrows": "to", "from": "analysis),", "to": "and", "value": 1, "weight": 1}, {"arrows": "to", "from": "and", "to": "linguistics", "value": 1, "weight": 1}, {"arrows": "to", "from": "and", "to": "probability,", "value": 1, "weight": 1}, {"arrows": "to", "from": "and", "to": "analysis),", "value": 1, "weight": 1}, {"arrows": "to", "from": "and", "to": "data", "value": 1, "weight": 1}, {"arrows": "to", "from": "and", "to": "simplicity", "value": 1, "weight": 1}, {"arrows": "to", "from": "and", "to": "scalability", "value": 1, "weight": 1}, {"arrows": "to", "from": "application.", "to": "the", "value": 1, "weight": 1}, {"arrows": "to", "from": "application.", "to": "The", "value": 1, "weight": 1}, {"arrows": "to", "from": "are", "to": "typically", "value": 1, "weight": 1}, {"arrows": "to", "from": "are", "to": "collected", "value": 1, "weight": 1}, {"arrows": "to", "from": "are", "to": "items", "value": 1, "weight": 1}, {"arrows": "to", "from": "are", "to": "words,", "value": 1, "weight": 1}, {"arrows": "to", "from": "are", "to": "models", "value": 1, "weight": 1}, {"arrows": "to", "from": "are", "to": "now", "value": 1, "weight": 1}, {"arrows": "to", "from": "are", "to": "them)", "value": 1, "weight": 1}, {"arrows": "to", "from": "are", "to": "simplicity", "value": 1, "weight": 1}, {"arrows": "to", "from": "base", "to": "or", "value": 1, "weight": 1}, {"arrows": "to", "from": "base", "to": "pairs", "value": 1, "weight": 1}, {"arrows": "to", "from": "be", "to": "can", "value": 1, "weight": 1}, {"arrows": "to", "from": "be", "to": "phonemes,", "value": 1, "weight": 1}, {"arrows": "to", "from": "be", "to": "also", "value": 1, "weight": 1}, {"arrows": "to", "from": "be", "to": "called", "value": 1, "weight": 1}, {"arrows": "to", "from": "benefits", "to": "Two", "value": 1, "weight": 1}, {"arrows": "to", "from": "benefits", "to": "of", "value": 1, "weight": 1}, {"arrows": "to", "from": "biological", "to": "instance,", "value": 1, "weight": 1}, {"arrows": "to", "from": "biological", "to": "sequence", "value": 1, "weight": 1}, {"arrows": "to", "from": "biology", "to": "computational", "value": 1, "weight": 1}, {"arrows": "to", "from": "biology", "to": "(for", "value": 1, "weight": 1}, {"arrows": "to", "from": "called", "to": "be", "value": 1, "weight": 1}, {"arrows": "to", "from": "called", "to": "shingles", "value": 1, "weight": 1}, {"arrows": "to", "from": "can", "to": "items", "value": 1, "weight": 1}, {"arrows": "to", "from": "can", "to": "be", "value": 1, "weight": 1}, {"arrows": "to", "from": "can", "to": "model", "value": 1, "weight": 1}, {"arrows": "to", "from": "can", "to": "store", "value": 1, "weight": 1}, {"arrows": "to", "from": "collected", "to": "are", "value": 1, "weight": 1}, {"arrows": "to", "from": "collected", "to": "from", "value": 1, "weight": 1}, {"arrows": "to", "from": "communication", "to": "probability,", "value": 1, "weight": 1}, {"arrows": "to", "from": "communication", "to": "theory,", "value": 1, "weight": 1}, {"arrows": "to", "from": "compression.", "to": "data", "value": 1, "weight": 1}, {"arrows": "to", "from": "compression.", "to": "Two", "value": 1, "weight": 1}, {"arrows": "to", "from": "computational", "to": "of", "value": 1, "weight": 1}, {"arrows": "to", "from": "computational", "to": "linguistics", "value": 2, "weight": 1}, {"arrows": "to", "from": "computational", "to": "theory,", "value": 1, "weight": 1}, {"arrows": "to", "from": "computational", "to": "processing),", "value": 1, "weight": 1}, {"arrows": "to", "from": "computational", "to": "biology", "value": 1, "weight": 1}, {"arrows": "to", "from": "context", "to": "more", "value": 1, "weight": 1}, {"arrows": "to", "from": "context", "to": "with", "value": 1, "weight": 1}, {"arrows": "to", "from": "contiguous", "to": "a", "value": 1, "weight": 1}, {"arrows": "to", "from": "contiguous", "to": "sequence", "value": 1, "weight": 1}, {"arrows": "to", "from": "corpus.", "to": "speech", "value": 1, "weight": 1}, {"arrows": "to", "from": "corpus.", "to": "When", "value": 1, "weight": 1}, {"arrows": "to", "from": "data", "to": "and", "value": 1, "weight": 1}, {"arrows": "to", "from": "data", "to": "compression.", "value": 1, "weight": 1}, {"arrows": "to", "from": "efficiently.", "to": "up", "value": 1, "weight": 1}, {"arrows": "to", "from": "enabling", "to": "tradeoff,", "value": 1, "weight": 1}, {"arrows": "to", "from": "enabling", "to": "small", "value": 1, "weight": 1}, {"arrows": "to", "from": "experiments", "to": "small", "value": 1, "weight": 1}, {"arrows": "to", "from": "experiments", "to": "to", "value": 1, "weight": 1}, {"arrows": "to", "from": "fields", "to": "the", "value": 1, "weight": 1}, {"arrows": "to", "from": "fields", "to": "of", "value": 1, "weight": 1}, {"arrows": "to", "from": "for", "to": "model", "value": 1, "weight": 1}, {"arrows": "to", "from": "for", "to": "predicting", "value": 1, "weight": 1}, {"arrows": "to", "from": "form", "to": "the", "value": 1, "weight": 1}, {"arrows": "to", "from": "form", "to": "of", "value": 1, "weight": 1}, {"arrows": "to", "from": "from", "to": "items", "value": 1, "weight": 1}, {"arrows": "to", "from": "from", "to": "a", "value": 2, "weight": 1}, {"arrows": "to", "from": "from", "to": "collected", "value": 1, "weight": 1}, {"arrows": "to", "from": "given", "to": "a", "value": 1, "weight": 1}, {"arrows": "to", "from": "given", "to": "sample", "value": 1, "weight": 1}, {"arrows": "to", "from": "in", "to": "the", "value": 2, "weight": 1}, {"arrows": "to", "from": "in", "to": "item", "value": 1, "weight": 1}, {"arrows": "to", "from": "in", "to": "such", "value": 1, "weight": 1}, {"arrows": "to", "from": "in", "to": "sequence", "value": 1, "weight": 1}, {"arrows": "to", "from": "in", "to": "used", "value": 1, "weight": 1}, {"arrows": "to", "from": "in", "to": "probability,", "value": 1, "weight": 1}, {"arrows": "to", "from": "instance,", "to": "(for", "value": 2, "weight": 1}, {"arrows": "to", "from": "instance,", "to": "statistical", "value": 1, "weight": 1}, {"arrows": "to", "from": "instance,", "to": "biological", "value": 1, "weight": 1}, {"arrows": "to", "from": "is", "to": "n-gram", "value": 1, "weight": 1}, {"arrows": "to", "from": "is", "to": "a", "value": 2, "weight": 1}, {"arrows": "to", "from": "is", "to": "model", "value": 1, "weight": 1}, {"arrows": "to", "from": "item", "to": "next", "value": 1, "weight": 1}, {"arrows": "to", "from": "item", "to": "in", "value": 1, "weight": 1}, {"arrows": "to", "from": "items", "to": "n", "value": 1, "weight": 1}, {"arrows": "to", "from": "items", "to": "from", "value": 1, "weight": 1}, {"arrows": "to", "from": "items", "to": "The", "value": 1, "weight": 1}, {"arrows": "to", "from": "items", "to": "can", "value": 1, "weight": 1}, {"arrows": "to", "from": "items", "to": "the", "value": 1, "weight": 1}, {"arrows": "to", "from": "items", "to": "are", "value": 1, "weight": 1}, {"arrows": "to", "from": "language", "to": "probabilistic", "value": 1, "weight": 1}, {"arrows": "to", "from": "language", "to": "model", "value": 1, "weight": 1}, {"arrows": "to", "from": "language", "to": "natural", "value": 1, "weight": 1}, {"arrows": "to", "from": "language", "to": "processing),", "value": 1, "weight": 1}, {"arrows": "to", "from": "larger", "to": "with", "value": 1, "weight": 1}, {"arrows": "to", "from": "larger", "to": "n,", "value": 1, "weight": 1}, {"arrows": "to", "from": "letters,", "to": "syllables,", "value": 1, "weight": 1}, {"arrows": "to", "from": "letters,", "to": "words", "value": 1, "weight": 1}, {"arrows": "to", "from": "linguistics", "to": "computational", "value": 2, "weight": 1}, {"arrows": "to", "from": "linguistics", "to": "and", "value": 1, "weight": 1}, {"arrows": "to", "from": "linguistics", "to": "(for", "value": 1, "weight": 1}, {"arrows": "to", "from": "may", "to": "n-grams", "value": 1, "weight": 1}, {"arrows": "to", "from": "may", "to": "also", "value": 1, "weight": 1}, {"arrows": "to", "from": "model", "to": "n-gram", "value": 1, "weight": 1}, {"arrows": "to", "from": "model", "to": "is", "value": 1, "weight": 1}, {"arrows": "to", "from": "model", "to": "language", "value": 1, "weight": 1}, {"arrows": "to", "from": "model", "to": "for", "value": 1, "weight": 1}, {"arrows": "to", "from": "model", "to": "a", "value": 1, "weight": 1}, {"arrows": "to", "from": "model", "to": "can", "value": 1, "weight": 1}, {"arrows": "to", "from": "model.[2]", "to": "Markov", "value": 1, "weight": 1}, {"arrows": "to", "from": "model.[2]", "to": "n-gram", "value": 1, "weight": 1}, {"arrows": "to", "from": "models", "to": "n-gram", "value": 2, "weight": 1}, {"arrows": "to", "from": "models", "to": "are", "value": 1, "weight": 1}, {"arrows": "to", "from": "models", "to": "(and", "value": 1, "weight": 1}, {"arrows": "to", "from": "more", "to": "store", "value": 1, "weight": 1}, {"arrows": "to", "from": "more", "to": "context", "value": 1, "weight": 1}, {"arrows": "to", "from": "n", "to": "of", "value": 1, "weight": 1}, {"arrows": "to", "from": "n", "to": "items", "value": 1, "weight": 1}, {"arrows": "to", "from": "n,", "to": "larger", "value": 1, "weight": 1}, {"arrows": "to", "from": "n,", "to": "a", "value": 1, "weight": 1}, {"arrows": "to", "from": "n-gram", "to": "an", "value": 1, "weight": 1}, {"arrows": "to", "from": "n-gram", "to": "is", "value": 1, "weight": 1}, {"arrows": "to", "from": "n-gram", "to": "An", "value": 1, "weight": 1}, {"arrows": "to", "from": "n-gram", "to": "model", "value": 1, "weight": 1}, {"arrows": "to", "from": "n-gram", "to": "model.[2]", "value": 1, "weight": 1}, {"arrows": "to", "from": "n-gram", "to": "models", "value": 2, "weight": 1}, {"arrows": "to", "from": "n-gram", "to": "of", "value": 1, "weight": 1}, {"arrows": "to", "from": "n-grams", "to": "The", "value": 1, "weight": 1}, {"arrows": "to", "from": "n-grams", "to": "typically", "value": 1, "weight": 1}, {"arrows": "to", "from": "n-grams", "to": "words,", "value": 1, "weight": 1}, {"arrows": "to", "from": "n-grams", "to": "may", "value": 1, "weight": 1}, {"arrows": "to", "from": "natural", "to": "statistical", "value": 1, "weight": 1}, {"arrows": "to", "from": "natural", "to": "language", "value": 1, "weight": 1}, {"arrows": "to", "from": "next", "to": "the", "value": 1, "weight": 1}, {"arrows": "to", "from": "next", "to": "item", "value": 1, "weight": 1}, {"arrows": "to", "from": "now", "to": "are", "value": 1, "weight": 1}, {"arrows": "to", "from": "now", "to": "widely", "value": 1, "weight": 1}, {"arrows": "to", "from": "of", "to": "fields", "value": 1, "weight": 1}, {"arrows": "to", "from": "of", "to": "computational", "value": 1, "weight": 1}, {"arrows": "to", "from": "of", "to": "sequence", "value": 1, "weight": 1}, {"arrows": "to", "from": "of", "to": "n", "value": 1, "weight": 1}, {"arrows": "to", "from": "of", "to": "sample", "value": 1, "weight": 1}, {"arrows": "to", "from": "of", "to": "text", "value": 1, "weight": 1}, {"arrows": "to", "from": "of", "to": "type", "value": 1, "weight": 1}, {"arrows": "to", "from": "of", "to": "probabilistic", "value": 1, "weight": 1}, {"arrows": "to", "from": "of", "to": "form", "value": 1, "weight": 1}, {"arrows": "to", "from": "of", "to": "a", "value": 1, "weight": 1}, {"arrows": "to", "from": "of", "to": "benefits", "value": 1, "weight": 1}, {"arrows": "to", "from": "of", "to": "n-gram", "value": 1, "weight": 1}, {"arrows": "to", "from": "or", "to": "text", "value": 2, "weight": 1}, {"arrows": "to", "from": "or", "to": "speech.", "value": 1, "weight": 1}, {"arrows": "to", "from": "or", "to": "words", "value": 1, "weight": 1}, {"arrows": "to", "from": "or", "to": "base", "value": 1, "weight": 1}, {"arrows": "to", "from": "or", "to": "speech", "value": 1, "weight": 1}, {"arrows": "to", "from": "pairs", "to": "base", "value": 1, "weight": 1}, {"arrows": "to", "from": "pairs", "to": "according", "value": 1, "weight": 1}, {"arrows": "to", "from": "phonemes,", "to": "be", "value": 1, "weight": 1}, {"arrows": "to", "from": "phonemes,", "to": "syllables,", "value": 1, "weight": 1}, {"arrows": "to", "from": "predicting", "to": "for", "value": 1, "weight": 1}, {"arrows": "to", "from": "predicting", "to": "the", "value": 1, "weight": 1}, {"arrows": "to", "from": "probabilistic", "to": "of", "value": 1, "weight": 1}, {"arrows": "to", "from": "probabilistic", "to": "language", "value": 1, "weight": 1}, {"arrows": "to", "from": "probability,", "to": "and", "value": 1, "weight": 1}, {"arrows": "to", "from": "probability,", "to": "an", "value": 1, "weight": 1}, {"arrows": "to", "from": "probability,", "to": "in", "value": 1, "weight": 1}, {"arrows": "to", "from": "probability,", "to": "communication", "value": 1, "weight": 1}, {"arrows": "to", "from": "processing),", "to": "language", "value": 1, "weight": 1}, {"arrows": "to", "from": "processing),", "to": "computational", "value": 1, "weight": 1}, {"arrows": "to", "from": "sample", "to": "given", "value": 1, "weight": 1}, {"arrows": "to", "from": "sample", "to": "of", "value": 1, "weight": 1}, {"arrows": "to", "from": "scalability", "to": "and", "value": 1, "weight": 1}, {"arrows": "to", "from": "scalability", "to": "\u2013", "value": 1, "weight": 1}, {"arrows": "to", "from": "scale", "to": "to", "value": 1, "weight": 1}, {"arrows": "to", "from": "scale", "to": "up", "value": 1, "weight": 1}, {"arrows": "to", "from": "sequence", "to": "contiguous", "value": 1, "weight": 1}, {"arrows": "to", "from": "sequence", "to": "of", "value": 1, "weight": 1}, {"arrows": "to", "from": "sequence", "to": "a", "value": 1, "weight": 1}, {"arrows": "to", "from": "sequence", "to": "in", "value": 1, "weight": 1}, {"arrows": "to", "from": "sequence", "to": "biological", "value": 1, "weight": 1}, {"arrows": "to", "from": "sequence", "to": "analysis),", "value": 1, "weight": 1}, {"arrows": "to", "from": "shingles", "to": "called", "value": 1, "weight": 1}, {"arrows": "to", "from": "shingles", "to": "An", "value": 1, "weight": 1}, {"arrows": "to", "from": "simplicity", "to": "are", "value": 1, "weight": 1}, {"arrows": "to", "from": "simplicity", "to": "and", "value": 1, "weight": 1}, {"arrows": "to", "from": "small", "to": "enabling", "value": 1, "weight": 1}, {"arrows": "to", "from": "small", "to": "experiments", "value": 1, "weight": 1}, {"arrows": "to", "from": "space\u2013time", "to": "well-understood", "value": 1, "weight": 1}, {"arrows": "to", "from": "space\u2013time", "to": "tradeoff,", "value": 1, "weight": 1}, {"arrows": "to", "from": "speech", "to": "or", "value": 1, "weight": 1}, {"arrows": "to", "from": "speech", "to": "corpus.", "value": 1, "weight": 1}, {"arrows": "to", "from": "speech.", "to": "or", "value": 1, "weight": 1}, {"arrows": "to", "from": "speech.", "to": "The", "value": 1, "weight": 1}, {"arrows": "to", "from": "statistical", "to": "instance,", "value": 1, "weight": 1}, {"arrows": "to", "from": "statistical", "to": "natural", "value": 1, "weight": 1}, {"arrows": "to", "from": "store", "to": "can", "value": 1, "weight": 1}, {"arrows": "to", "from": "store", "to": "more", "value": 1, "weight": 1}, {"arrows": "to", "from": "such", "to": "in", "value": 1, "weight": 1}, {"arrows": "to", "from": "such", "to": "a", "value": 1, "weight": 1}, {"arrows": "to", "from": "syllables,", "to": "phonemes,", "value": 1, "weight": 1}, {"arrows": "to", "from": "syllables,", "to": "letters,", "value": 1, "weight": 1}, {"arrows": "to", "from": "text", "to": "of", "value": 1, "weight": 1}, {"arrows": "to", "from": "text", "to": "or", "value": 2, "weight": 1}, {"arrows": "to", "from": "text", "to": "a", "value": 1, "weight": 1}, {"arrows": "to", "from": "that", "to": "algorithms", "value": 1, "weight": 1}, {"arrows": "to", "from": "that", "to": "use", "value": 1, "weight": 1}, {"arrows": "to", "from": "the", "to": "in", "value": 2, "weight": 1}, {"arrows": "to", "from": "the", "to": "fields", "value": 1, "weight": 1}, {"arrows": "to", "from": "the", "to": "to", "value": 1, "weight": 1}, {"arrows": "to", "from": "the", "to": "application.", "value": 1, "weight": 1}, {"arrows": "to", "from": "the", "to": "When", "value": 1, "weight": 1}, {"arrows": "to", "from": "the", "to": "items", "value": 1, "weight": 1}, {"arrows": "to", "from": "the", "to": "predicting", "value": 1, "weight": 1}, {"arrows": "to", "from": "the", "to": "next", "value": 1, "weight": 1}, {"arrows": "to", "from": "the", "to": "form", "value": 1, "weight": 1}, {"arrows": "to", "from": "them)", "to": "use", "value": 1, "weight": 1}, {"arrows": "to", "from": "them)", "to": "are", "value": 1, "weight": 1}, {"arrows": "to", "from": "theory,", "to": "communication", "value": 1, "weight": 1}, {"arrows": "to", "from": "theory,", "to": "computational", "value": 1, "weight": 1}, {"arrows": "to", "from": "to", "to": "according", "value": 1, "weight": 1}, {"arrows": "to", "from": "to", "to": "the", "value": 1, "weight": 1}, {"arrows": "to", "from": "to", "to": "experiments", "value": 1, "weight": 1}, {"arrows": "to", "from": "to", "to": "scale", "value": 1, "weight": 1}, {"arrows": "to", "from": "tradeoff,", "to": "space\u2013time", "value": 1, "weight": 1}, {"arrows": "to", "from": "tradeoff,", "to": "enabling", "value": 1, "weight": 1}, {"arrows": "to", "from": "type", "to": "a", "value": 1, "weight": 1}, {"arrows": "to", "from": "type", "to": "of", "value": 1, "weight": 1}, {"arrows": "to", "from": "typically", "to": "n-grams", "value": 1, "weight": 1}, {"arrows": "to", "from": "typically", "to": "are", "value": 1, "weight": 1}, {"arrows": "to", "from": "up", "to": "scale", "value": 1, "weight": 1}, {"arrows": "to", "from": "up", "to": "efficiently.", "value": 1, "weight": 1}, {"arrows": "to", "from": "use", "to": "that", "value": 1, "weight": 1}, {"arrows": "to", "from": "use", "to": "them)", "value": 1, "weight": 1}, {"arrows": "to", "from": "used", "to": "widely", "value": 1, "weight": 1}, {"arrows": "to", "from": "used", "to": "in", "value": 1, "weight": 1}, {"arrows": "to", "from": "well-understood", "to": "a", "value": 1, "weight": 1}, {"arrows": "to", "from": "well-understood", "to": "space\u2013time", "value": 1, "weight": 1}, {"arrows": "to", "from": "widely", "to": "now", "value": 1, "weight": 1}, {"arrows": "to", "from": "widely", "to": "used", "value": 1, "weight": 1}, {"arrows": "to", "from": "with", "to": "\u2013", "value": 1, "weight": 1}, {"arrows": "to", "from": "with", "to": "larger", "value": 1, "weight": 1}, {"arrows": "to", "from": "with", "to": "context", "value": 1, "weight": 1}, {"arrows": "to", "from": "with", "to": "a", "value": 1, "weight": 1}, {"arrows": "to", "from": "words", "to": "letters,", "value": 1, "weight": 1}, {"arrows": "to", "from": "words", "to": "or", "value": 1, "weight": 1}, {"arrows": "to", "from": "words,", "to": "are", "value": 1, "weight": 1}, {"arrows": "to", "from": "words,", "to": "n-grams", "value": 1, "weight": 1}, {"arrows": "to", "from": "\u2013", "to": "scalability", "value": 1, "weight": 1}, {"arrows": "to", "from": "\u2013", "to": "with", "value": 1, "weight": 1}, {"arrows": "to", "from": "\u2212", "to": "(n", "value": 1, "weight": 1}, {"arrows": "to", "from": "\u2212", "to": "1)\u2013order", "value": 1, "weight": 1}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {"physics": {"forceAtlas2Based": {"gravitationalConstant": -230, "springLength": 170, "springConstant": 0, "avoidOverlap": 1}, "minVelocity": 0.75, "solver": "forceAtlas2Based", "timestep": 1}};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+	 
+        
+
+
+        
+        network.on("stabilizationProgress", function(params) {
+      		document.getElementById('loadingBar').removeAttribute("style");
+	        var maxWidth = 496;
+	        var minWidth = 20;
+	        var widthFactor = params.iterations/params.total;
+	        var width = Math.max(minWidth,maxWidth * widthFactor);
+
+	        document.getElementById('bar').style.width = width + 'px';
+	        document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+	    });
+	    network.once("stabilizationIterationsDone", function() {
+	        document.getElementById('text').innerHTML = '100%';
+	        document.getElementById('bar').style.width = '496px';
+	        document.getElementById('loadingBar').style.opacity = 0;
+	        // really clean the dom element
+	        setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+	    });
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>
