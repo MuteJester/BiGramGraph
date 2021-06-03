@@ -2,7 +2,6 @@ import networkx as nx
 import nltk
 import numpy as np
 import pandas as pd
-# import spacy as sp
 from nltk import ngrams
 from pyvis.network import Network
 import utils
@@ -39,6 +38,7 @@ class BiGramGraph:
     """
 
     def __init__(self, data):
+        import spacy as sp
         n = 2
         tokenized_text = ' '.join(data).split()
         ngram = ngrams(tokenized_text, n=n)
@@ -47,7 +47,7 @@ class BiGramGraph:
         n_frequencies = nltk.FreqDist(ngram)
         edges = list(dict(n_frequencies).keys())
         nodes = np.unique(np.array(edges).flatten())
-
+        self._nlp = sp.load('en_core_web_sm')
         self.Graph = nx.DiGraph()
         self.Graph.add_nodes_from(nodes)
         for x, y in edges:
@@ -79,6 +79,30 @@ class BiGramGraph:
         """
         return self.get_word_colors()['color'].max()
 
+    def __repr__(self):
+        n = self.N_nodes
+        e = self.N_edges
+        xi = self.get_Xi()
+        return f'Number of words included: {n}\nNumber of edges included: {e}\nChromatic number: {xi}\n'
+
+    def __getitem__(self, item) -> dict:
+        all_edges = self.Graph[item]
+        cols = ['node', 'w', 'color', 'pos']
+        _out = []
+        _in = []
+        for _node, _w in zip(all_edges.keys(), all_edges.values()):
+            if self.Graph.has_edge(item, _node):
+                _out.append([_node, _w['value'], self.Chromatic_N[_node], self._nlp(str(_node))[0].pos_])
+
+            if self.Graph.has_edge(_node, item):
+                _in.append([_node, _w['value'], self.Chromatic_N[_node], self._nlp(str(_node))[0].pos_])
+
+        _out = pd.DataFrame(_out, columns=cols)
+        _in = pd.DataFrame(_in, columns=cols)
+        info = {'node': item, 'color': self.Chromatic_N[item], 'pos': self._nlp(str(item))[0].pos_, 'in': _in,
+                'out': _out}
+        return info
+
     def Viz_Graph(self, notebook=False, height=500, width=900, directed=False):
         nt = Network(f'{height}px', f'{width}px', notebook=notebook, directed=directed)
         nt.set_options(
@@ -97,6 +121,4 @@ class BiGramGraph:
         nt.prep_notebook()
         return nt.show('nx.html')
 
-
-G = BiGramGraph(utils.clean_trans_texts(utils.load_data(0, 'Lyrics')))
-print(G.get_word_colors())
+# G = BiGramGraph(utils.clean_trans_texts(utils.load_data(0, 'Lyrics')))
