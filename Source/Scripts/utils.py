@@ -2,6 +2,7 @@ from wordcloud import STOPWORDS
 from string import punctuation
 from typing import Union, Iterable
 import pandas as pd
+import glob
 
 punctuation = punctuation + '“’‛‘”‹›»«'
 
@@ -41,4 +42,21 @@ def clean_trans_texts(text: Iterable) -> Union[pd.Series, pd.DataFrame]:
 
     return _temp_text
 
-# example_corpus = pd.read_csv('../../data/LYRICS_DATASET.csv')['Lyrics']
+
+def load_data(file: Union[int, str], col=None) -> Union[pd.DataFrame, pd.Series]:
+    """
+    :param file: The name of the wanted file (not its path), or the file's index in an ordered list of all files in the
+        data folder.
+    :param col: Optional. The name of the wanted column(s) in the file.
+    :return: pandas Series/DataFrame, contains of the file's data.
+    """
+    if type(file) == int:
+        f_name = glob.glob('../../data/*')[file]
+    elif type(file) == str:
+        f_name = '../../data/' + file
+
+    if col is None:
+        return pd.read_csv(f_name)
+
+    else:
+        return pd.read_csv(f_name)[col]
