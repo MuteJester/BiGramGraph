@@ -2,9 +2,10 @@ import networkx as nx
 import nltk
 import numpy as np
 import pandas as pd
-import spacy as sp
+# import spacy as sp
 from nltk import ngrams
 from pyvis.network import Network
+import utils
 
 
 class BiGramGraph:
@@ -72,6 +73,12 @@ class BiGramGraph:
         return pd.DataFrame([self.Chromatic_N.values(),
                              self.Chromatic_N.keys()]).T.rename(columns={0: 'color', 1: 'word'})
 
+    def get_Xi(self) -> int:
+        """
+        :return: The chromatic number of the graph.
+        """
+        return self.get_word_colors()['color'].max()
+
     def Viz_Graph(self, notebook=False, height=500, width=900, directed=False):
         nt = Network(f'{height}px', f'{width}px', notebook=notebook, directed=directed)
         nt.set_options(
@@ -89,3 +96,7 @@ class BiGramGraph:
         # nt.show_buttons(filter_=['physics'])
         nt.prep_notebook()
         return nt.show('nx.html')
+
+
+G = BiGramGraph(utils.clean_trans_texts(utils.load_data(0, 'Lyrics')))
+print(G.get_word_colors())
