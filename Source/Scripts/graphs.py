@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from nltk import ngrams
 from pyvis.network import Network
+import spacy as sp
 import utils
 
 
@@ -38,7 +39,6 @@ class BiGramGraph:
     """
 
     def __init__(self, data):
-        import spacy as sp
         n = 2
         tokenized_text = ' '.join(data).split()
         ngram = ngrams(tokenized_text, n=n)
@@ -77,7 +77,7 @@ class BiGramGraph:
         """
         :return: The chromatic number of the graph.
         """
-        return self.get_word_colors()['color'].max()
+        return self.get_word_colors()['color'].max() + 1
 
     def __repr__(self):
         n = self.N_nodes
@@ -120,5 +120,4 @@ class BiGramGraph:
         # nt.show_buttons(filter_=['physics'])
         nt.prep_notebook()
         return nt.show('nx.html')
-
 # G = BiGramGraph(utils.clean_trans_texts(utils.load_data(0, 'Lyrics')))
