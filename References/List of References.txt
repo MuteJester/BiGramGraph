@@ -5,3 +5,5 @@ https://arxiv.org/abs/1806.09206
 https://www.tidytextmining.com/ngrams.html
 
 https://www.researchgate.net/publication/215803143_N-gram_graphs_Representing_documents_and_document_sets_in_summary_system_evaluation
+
+https://networkx.org/documentation/stable/reference/algorithms/index.html

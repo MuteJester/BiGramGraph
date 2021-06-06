@@ -6,6 +6,7 @@ from nltk import ngrams
 from pyvis.network import Network
 import utils
 
+
 class BiGramGraph:
     """
     A class used to transform a corpus given as a numpy array into a graph form of the
@@ -83,6 +84,45 @@ class BiGramGraph:
         """
         return self.Data['color'].max() + 1
 
+    def is_DAG(self):
+        return nx.algorithms.dag.is_directed_acyclic_graph(self.Graph)
+
+    def get_Diameter(self):
+        return nx.algorithms.distance_measures.diameter(self.Graph)
+
+    def get_Min_Edge_Cover(self):
+        return nx.algorithms.covering.min_edge_cover(self.Graph)
+
+    def get_Shortest_Simple_Path(self, start_node, end_node):
+        return nx.algorithms.simple_paths.shortest_simple_paths(self.Graph, source=start_node, target=end_node)
+
+    def get_Eulerian(self):
+        if nx.is_eulerian(self.Graph):
+            return nx.eulerian_circuit()(self.Graph)
+        else:
+            return 'Not Eulerian'
+
+    def get_Volume(self, S):
+        return nx.algorithms.cuts.volume(self.Graph, S)
+
+    def get_Eulerian_Path(self):
+        return nx.eulerian_path(self.Graph) if nx.has_eulerian_path(self.Graph) else "Graph Has No Eulerian Path"
+
+    def get_Cycle(self, start_node):
+        return nx.algorithms.cycles.find_cycle(self.Graph, start_node)
+
+    def get_All_Simple_Cycles(self):
+        return nx.algorithms.cycles.simple_cycles(self.Graph)
+
+    def is_Strongly_Connected(self):
+        return nx.algorithms.components.is_strongly_connected(self.Graph)
+
+    def get_Number_Strongly_Connected_Components(self):
+        return nx.algorithms.components.number_strongly_connected_components(self.Graph)
+
+    def get_Strongly_Connected_Components(self):
+        return nx.algorithms.components.strongly_connected_components(self.Graph)
+
     def __repr__(self):
         n = self.N_nodes
         e = self.N_edges
@@ -97,6 +137,8 @@ class BiGramGraph:
             tokens = string.split(' ')
             vec_form = []
             for tok in tokens:
+                if tok not in self.Data.word.values:
+                    continue
                 vec_form.append(self.Data.query(f'word == "{tok}"')['color'].values[0])
             return vec_form
         else:
