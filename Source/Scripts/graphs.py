@@ -65,24 +65,17 @@ class BiGramGraph:
         self.Data = pd.DataFrame([self.Data.values(),
                                   self.Data.keys()]).T.rename(columns={0: 'color', 1: 'word'})
 
-        self.Data['pos'] = self.Data['word'].apply(lambda _z: self._nlp(str(_z))[0].pos_)
         self.Edges = pd.DataFrame(edges, columns=['in', 'out'])
-        self.Edges['weight'] = self.Edges.apply(lambda _z: n_frequencies[(_z['in'], _z['out'])])
+        self.Edges['weight'] = self.Edges.apply(lambda _z: n_frequencies[(_z['in'], _z['out'])], axis=1)
 
-        print(self.Data)
-
-    def get_word_colors(self) -> pd.DataFrame:
-        """
-        :return: A pandas DataFrame, contains of each of the graph nodes with their color. Each of them colored using
-            the Greedy Coloring algorithm.
-        """
-        return self.Data[['color', 'word']]
+    def add_part_of_speech(self):
+        self.Data['pos'] = self.Data['word'].progress_apply(lambda _z: self._nlp(str(_z))[0].pos_)
 
     def get_Xi(self) -> int:
         """
         :return: The chromatic number of the graph.
         """
-        return self.get_word_colors()['color'].max() + 1
+        return self.Data['color'].max() + 1
 
     def __repr__(self):
         n = self.N_nodes
@@ -92,6 +85,16 @@ class BiGramGraph:
 
     def __getitem__(self, item) -> dict:
         return dict()
+
+    def vectorize(self, string, method='chromatic'):
+        if method == 'chromatic':
+            tokens = string.split(' ')
+            vec_form = []
+            for tok in tokens:
+                vec_form.append(self.Data.query(f'word == "{tok}"')['color'].values[0])
+            return vec_form
+        else:
+            raise NameError('Bad Method')
 
     def Viz_Graph(self, notebook=False, height=500, width=900, directed=False):
         nt = Network(f'{height}px', f'{width}px', notebook=notebook, directed=directed)
