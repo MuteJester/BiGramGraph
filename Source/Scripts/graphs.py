@@ -4,9 +4,7 @@ import numpy as np
 import pandas as pd
 from nltk import ngrams
 from pyvis.network import Network
-import spacy as sp
 import utils
-
 
 class BiGramGraph:
     """
@@ -38,7 +36,14 @@ class BiGramGraph:
         Add info
     """
 
-    def __init__(self, data):
+    def __init__(self, data, notebook=False):
+        if not notebook:
+            from tqdm import tqdm
+            tqdm.pandas()
+        else:
+            from tqdm.notebook import tqdm
+            tqdm.pandas()
+
         n = 2
         tokenized_text = ' '.join(data).split()
         ngram = ngrams(tokenized_text, n=n)
@@ -47,7 +52,6 @@ class BiGramGraph:
         n_frequencies = nltk.FreqDist(ngram)
         edges = list(dict(n_frequencies).keys())
         nodes = np.unique(np.array(edges).flatten())
-        self._nlp = sp.load('en_core_web_sm')
         self.Graph = nx.DiGraph()
         self.Graph.add_nodes_from(nodes)
         for x, y in edges:
@@ -60,7 +64,7 @@ class BiGramGraph:
         self.Out_Max_Deg = max(dict(self.Graph.out_degree).values())
         self.In_Min_Deg = min(dict(self.Graph.in_degree).values())
         self.Out_Min_Deg = min(dict(self.Graph.out_degree).values())
-
+        self._nlp = None
         self.Data = nx.algorithms.coloring.greedy_color(self.Graph)
         self.Data = pd.DataFrame([self.Data.values(),
                                   self.Data.keys()]).T.rename(columns={0: 'color', 1: 'word'})
@@ -69,6 +73,8 @@ class BiGramGraph:
         self.Edges['weight'] = self.Edges.apply(lambda _z: n_frequencies[(_z['in'], _z['out'])], axis=1)
 
     def add_part_of_speech(self):
+        import spacy as sp
+        self._nlp = sp.load('en_core_web_sm')
         self.Data['pos'] = self.Data['word'].progress_apply(lambda _z: self._nlp(str(_z))[0].pos_)
 
     def get_Xi(self) -> int:
@@ -116,3 +122,4 @@ class BiGramGraph:
 
 
 G = BiGramGraph(utils.clean_trans_texts(utils.load_data(0, 'Lyrics')))
+print(G.add_part_of_speech())
