@@ -60,18 +60,23 @@ class BiGramGraph:
         self.Out_Max_Deg = max(dict(self.Graph.out_degree).values())
         self.In_Min_Deg = min(dict(self.Graph.in_degree).values())
         self.Out_Min_Deg = min(dict(self.Graph.out_degree).values())
-        self.Chromatic_N = nx.algorithms.coloring.greedy_color(self.Graph)
 
-        # pos = nx.spiral_layout(self.Graph, resolution=3.5)
-        # pos = nx.drawing.nx_pydot.graphviz_layout(self.Graph)
+        self.Data = nx.algorithms.coloring.greedy_color(self.Graph)
+        self.Data = pd.DataFrame([self.Data.values(),
+                                  self.Data.keys()]).T.rename(columns={0: 'color', 1: 'word'})
+
+        self.Data['pos'] = self.Data['word'].apply(lambda _z: self._nlp(str(_z))[0].pos_)
+        self.Edges = pd.DataFrame(edges, columns=['in', 'out'])
+        self.Edges['weight'] = self.Edges.apply(lambda _z: n_frequencies[(_z['in'], _z['out'])])
+
+        print(self.Data)
 
     def get_word_colors(self) -> pd.DataFrame:
         """
         :return: A pandas DataFrame, contains of each of the graph nodes with their color. Each of them colored using
             the Greedy Coloring algorithm.
         """
-        return pd.DataFrame([self.Chromatic_N.values(),
-                             self.Chromatic_N.keys()]).T.rename(columns={0: 'color', 1: 'word'})
+        return self.Data[['color', 'word']]
 
     def get_Xi(self) -> int:
         """
@@ -86,22 +91,7 @@ class BiGramGraph:
         return f'Number of words included: {n}\nNumber of edges included: {e}\nChromatic number: {xi}\n'
 
     def __getitem__(self, item) -> dict:
-        all_edges = self.Graph[item]
-        cols = ['node', 'w', 'color', 'pos']
-        _out = []
-        _in = []
-        for _node, _w in zip(all_edges.keys(), all_edges.values()):
-            if self.Graph.has_edge(item, _node):
-                _out.append([_node, _w['value'], self.Chromatic_N[_node], self._nlp(str(_node))[0].pos_])
-
-            if self.Graph.has_edge(_node, item):
-                _in.append([_node, _w['value'], self.Chromatic_N[_node], self._nlp(str(_node))[0].pos_])
-
-        _out = pd.DataFrame(_out, columns=cols)
-        _in = pd.DataFrame(_in, columns=cols)
-        info = {'node': item, 'color': self.Chromatic_N[item], 'pos': self._nlp(str(item))[0].pos_, 'in': _in,
-                'out': _out}
-        return info
+        return dict()
 
     def Viz_Graph(self, notebook=False, height=500, width=900, directed=False):
         nt = Network(f'{height}px', f'{width}px', notebook=notebook, directed=directed)
@@ -120,4 +110,6 @@ class BiGramGraph:
         # nt.show_buttons(filter_=['physics'])
         nt.prep_notebook()
         return nt.show('nx.html')
-# G = BiGramGraph(utils.clean_trans_texts(utils.load_data(0, 'Lyrics')))
+
+
+G = BiGramGraph(utils.clean_trans_texts(utils.load_data(0, 'Lyrics')))
