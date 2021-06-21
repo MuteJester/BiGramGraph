@@ -3,6 +3,7 @@ from string import punctuation
 from typing import Union, Iterable
 import pandas as pd
 import glob
+import numpy as np
 
 punctuation = punctuation + '“’‛‘”‹›»«'
 
@@ -60,3 +61,33 @@ def load_data(file: Union[int, str], col=None) -> Union[pd.DataFrame, pd.Series]
 
     else:
         return pd.read_csv(f_name)[col]
+
+
+def calculate_path_weight(Graph, path):
+    weight = 0
+    start = path[0]
+    for i in path[1:]:
+        weight += Graph.Edges[(Graph.Edges['in'] == start[0]) & (Graph.Edges.out == i[0])].weight.values[0]
+        start = i
+    return weight
+
+
+def calculate_cycle_density(Graph, cycle):
+    weight = 0
+    for i in cycle:
+        weight += np.sqrt(Graph.Graph.out_degree(i[0]) + Graph.Graph.in_degree(i[0]))
+    return weight
+
+
+def calculate_path_density(Graph, path):
+    weight = 0
+    for i in path:
+        IN = Graph.Graph.out_degree(i[0])
+        OUT = Graph.Graph.in_degree(i[0])
+        if type(IN) != int:
+            weight += np.sqrt(OUT)
+        elif type(OUT) != int:
+            weight += np.sqrt(IN)
+        else:
+            weight += np.sqrt(IN + OUT)
+    return weight
