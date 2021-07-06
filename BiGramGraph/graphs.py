@@ -13,7 +13,6 @@ import spacy as sp
 import pickle
 from wordcloud import WordCloud
 from tqdm.notebook import tqdm
-tqdm.pandas()
 from wordcloud import STOPWORDS
 from string import punctuation
 import enchant

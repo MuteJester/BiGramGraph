@@ -1,19 +1,32 @@
 from distutils.core import setup
 setup(
-  name = 'YOURPACKAGENAME',         # How you named your package folder (MyLib)
-  packages = ['YOURPACKAGENAME'],   # Chose the same as "name"
-  version = '0.1',      # Start with a small number and increase it with every change you make
+  name = 'BiGramGraph',         # How you named your package folder (MyLib)
+  packages = ['BiGramGraph'],   # Chose the same as "name"
+  version = 'v1',      # Start with a small number and increase it with every change you make
   license='MIT',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
-  description = 'TYPE YOUR DESCRIPTION HERE',   # Give a short description about your library
-  author = 'YOUR NAME',                   # Type in your name
-  author_email = 'your.email@domain.com',      # Type in your E-Mail
-  url = 'https://github.com/user/reponame',   # Provide either the link to your github or to your website
-  download_url = 'https://github.com/user/reponame/archive/v_01.tar.gz',    # I explain this later on
-  keywords = ['SOME', 'MEANINGFULL', 'KEYWORDS'],   # Keywords that define your package best
+  description = 'Implemintations of concepts presented in the paper "On Bi Gram Graph attibutes"',   # Give a short description about your library
+  author = 'Thomas Konstantinovsky and Matan Mizrachi',                   # Type in your name
+  author_email = 'thomaskon90@gmail.com, matt8ac@gmail.com',      # Type in your E-Mail
+  url = 'https://github.com/MuteJester/BiGramGraph',   # Provide either the link to your github or to your website
+  download_url = 'https://github.com/MuteJester/BiGramGraph/archive/refs/tags/v1.tar.gz',    # I explain this later on
+  keywords = ['NLP', 'Machine Learning', 'Graph Thoery','Text Generation','Metrics'],   # Keywords that define your package best
   install_requires=[            # I get to this in a second
-          'validators',
-          'beautifulsoup4',
-      ],
+          'numpy',
+          'pandas',
+          'matplotlib',
+          'networkx',
+          'seaborn',
+          'pyvis',
+          'nltk',
+          'pydot',
+          'spacy',
+          'wordcloud',
+          'tqdm',
+          'pyenchant',
+          'sklearn',
+
+
+  ],
   classifiers=[
     'Development Status :: 3 - Alpha',      # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
     'Intended Audience :: Developers',      # Define that your audience are developers
