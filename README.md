@@ -4,3 +4,4 @@ We propose a new approach to text semantic analysis and general corpus analysis 
 
 full paper: https://arxiv.org/abs/2107.02128
  
+Implementations available for python, use 'pip install BiGramGraph' to install library. 
