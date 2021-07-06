@@ -1,3 +1,39 @@
+import numpy as np
+from tqdm.notebook import tqdm
+import nltk
+import pandas as pd
+
+
+def calculate_path_weight(Graph, path):
+    weight = 0
+    start = path[0]
+    for i in path[1:]:
+        weight += Graph.Edges[(Graph.Edges['in'] == start[0]) & (Graph.Edges.out == i[0])].weight.values[0]
+        start = i
+    return weight
+
+
+def calculate_cycle_density(Graph, cycle):
+    weight = 0
+    for i in cycle:
+        weight += np.sqrt(Graph.Graph.out_degree(i[0]) + Graph.Graph.in_degree(i[0]))
+    return weight
+
+
+def calculate_path_density(Graph, path):
+    weight = 0
+    for i in path:
+        IN = Graph.Graph.out_degree(i[0])
+        OUT = Graph.Graph.in_degree(i[0])
+        if type(IN) != int:
+            weight += np.sqrt(OUT)
+        elif type(OUT) != int:
+            weight += np.sqrt(IN)
+        else:
+            weight += np.sqrt(IN + OUT)
+    return weight
+
+
 class ChromaticRandomWalker:
     """
    A class used to transform a corpus given as a numpy array into a graph form of the
@@ -12,7 +48,6 @@ class ChromaticRandomWalker:
 
    """
 
-
     def __init__(self, Graph):
         """
 
@@ -24,10 +59,8 @@ class ChromaticRandomWalker:
         self.Graph = Graph
         self.max_xi = Graph.get_Xi()
 
-
     def __repr__(self):
         return self.Graph.__repr__()
-
 
     def generate_chromatic_vector(self, max_xi, size):
         chromatic_nums = list(range(max_xi))
@@ -46,7 +79,6 @@ class ChromaticRandomWalker:
                 continue
         self.Random_Chromatic_Vec = chrom_vec
 
-
     def calculate_path_weight(self, path):
         weight = 0
         start = path[0]
@@ -54,7 +86,6 @@ class ChromaticRandomWalker:
             weight += self.Graph.Edges[(self.Graph.Edges['in'] == start) & (self.Graph.Edges.out == i)].weight.values[0]
             start = i
         return weight
-
 
     def generate(self, method='heaviest', vec_size=5, depth=10):
         """
@@ -108,7 +139,7 @@ class ChromaticRandomWalker:
 
 
 def chromatic_distance(graph_1, graph_2):
-        """
+    """
           Args
         ----------
         graph_1 : BiGramGraph
@@ -116,33 +147,33 @@ def chromatic_distance(graph_1, graph_2):
         graph_2 : BiGramGraph
             the second graph to be compared against
 
-        Returns the psi similarity coeffiecnt as presented in the paper
-        return: int : psi similarity coeffiecnt
+        Returns the psi similarity coefficient as presented in the paper
+        return: int : psi similarity coefficient
         """
-        if 'pos' not in graph_1.Data.columns or 'pos' not in graph_2.Data.columns:
-            raise PosError('Please Calculate PartofSpeech for Each Graph')
+    if 'pos' not in graph_1.Data.columns or 'pos' not in graph_2.Data.columns:
+        raise NotImplementedError('Please Calculate PartofSpeech for Each Graph')
 
-        overlaping_words = set(graph_1.Data['word'])
-        overlaping_words = overlaping_words & set(graph_2.Data['word'])
+    overlaping_words = set(graph_1.Data['word'])
+    overlaping_words = overlaping_words & set(graph_2.Data['word'])
 
-        I = len(overlaping_words)
+    I = len(overlaping_words)
 
-        chrom_ds = pd.DataFrame(index=list(overlaping_words))
-        chrom_ds['chrom1'] = graph_1.Data.set_index('word').loc[overlaping_words].color
-        chrom_ds['chrom2'] = graph_2.Data.set_index('word').loc[overlaping_words].color
-        same_chrom_num = chrom_ds.apply(lambda x: np.mean(x) == x[0], axis=1)
-        chrom_ds = chrom_ds[same_chrom_num].rename(columns={'chrom1': 'color'}).drop(columns=['chrom2'])
+    chrom_ds = pd.DataFrame(index=list(overlaping_words))
+    chrom_ds['chrom1'] = graph_1.Data.set_index('word').loc[overlaping_words].color
+    chrom_ds['chrom2'] = graph_2.Data.set_index('word').loc[overlaping_words].color
+    same_chrom_num = chrom_ds.apply(lambda x: np.mean(x) == x[0], axis=1)
+    chrom_ds = chrom_ds[same_chrom_num].rename(columns={'chrom1': 'color'}).drop(columns=['chrom2'])
 
-        # Epsilon
-        E = 0
-        chrom_ds['weight1'] = chrom_ds.index.to_series().apply(lambda x: graph_1.Graph.degree(x))
-        # graph_1.Data.set_index('word').loc[overlaping_words].pos
-        chrom_ds['weight2'] = chrom_ds.index.to_series().apply(lambda x: graph_2.Graph.degree(x))
-        # same_weight = chrom_ds.apply(lambda x: np.max(x)<=2*np.min(x) ,axis=1)
-        same_weight = chrom_ds[['weight1', 'weight2']].apply(lambda x: np.mean(x) == x[0], axis=1)
-        same_weight = chrom_ds[same_weight]
+    # Epsilon
+    E = 0
+    chrom_ds['weight1'] = chrom_ds.index.to_series().apply(lambda x: graph_1.Graph.degree(x))
+    # graph_1.Data.set_index('word').loc[overlaping_words].pos
+    chrom_ds['weight2'] = chrom_ds.index.to_series().apply(lambda x: graph_2.Graph.degree(x))
+    # same_weight = chrom_ds.apply(lambda x: np.max(x)<=2*np.min(x) ,axis=1)
+    same_weight = chrom_ds[['weight1', 'weight2']].apply(lambda x: np.mean(x) == x[0], axis=1)
+    same_weight = chrom_ds[same_weight]
 
-        ICW = len(same_weight)
-        IC = len(chrom_ds)
+    ICW = len(same_weight)
+    IC = len(chrom_ds)
 
-        return IC / I
+    return IC / I
