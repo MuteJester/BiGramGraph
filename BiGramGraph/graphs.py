@@ -1,25 +1,12 @@
 import numpy             as np
 import pandas            as pd
-import matplotlib.pyplot as plt
 import networkx          as nx
-import seaborn           as sns
 from nltk import ngrams
 from pyvis.network import Network
-import os
-import re
 import nltk
-import pydot
 import spacy as sp
-import pickle
-from wordcloud import WordCloud
-from tqdm.notebook import tqdm
-from wordcloud import STOPWORDS
-from string import punctuation
 import enchant
-import pickle
-from sklearn.decomposition import PCA, TruncatedSVD
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.pipeline import Pipeline, make_pipeline
+from tqdm.notebook import tqdm
 
 wchecker = enchant.Dict("en_US")
 nlps = sp.load('en_core_web_sm')
