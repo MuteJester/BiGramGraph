@@ -93,7 +93,7 @@ class ChromaticRandomWalker:
         Arguments
         ----------
         method : str
-            the protocl of path scoring via which the walker will choose its course available methods include:
+            the protocol of path scoring via which the walker will choose its course available methods include:
             1) heaviest -> the max weighted path
             2) lightest -> the min weighted path
             3) density_max -> the max density path
