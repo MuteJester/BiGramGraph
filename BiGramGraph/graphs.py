@@ -3,8 +3,8 @@ import pandas            as pd
 import matplotlib.pyplot as plt
 import networkx          as nx
 import seaborn           as sns
-from nltk                import ngrams
-from pyvis.network       import Network
+from nltk import ngrams
+from pyvis.network import Network
 import os
 import re
 import nltk
@@ -17,11 +17,13 @@ from wordcloud import STOPWORDS
 from string import punctuation
 import enchant
 import pickle
-from sklearn.decomposition import PCA,TruncatedSVD
+from sklearn.decomposition import PCA, TruncatedSVD
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.pipeline import Pipeline, make_pipeline
+
 wchecker = enchant.Dict("en_US")
 nlps = sp.load('en_core_web_sm')
+
 
 class BiGramGraph:
     """
@@ -249,7 +251,7 @@ class BiGramGraph:
         Returns the shortest path between two words
         return: list: path between two nodes
         """
-        return nx.shortest_path(bigraph_models[0].Graph, source=source, target=target, weight=weight, method=method)
+        return nx.shortest_path(self.Graph, source=source, target=target, weight=weight, method=method)
 
     def is_Strongly_Connected(self):
         return nx.algorithms.components.is_strongly_connected(self.Graph)
@@ -332,48 +334,48 @@ class BiGramGraph:
        return: np.darray: vectorized text
        """
 
-    if method == 'chromatic':
-        if type(string) == str:
-            if strategy == None:
-                vectorized = np.zeros(len(string))
-                for idx, word in enumerate(string.split(' ')):
-                    query = self.Data.query(f'word == "{word}"').color.values
-                    if len(query) == 0:
-                        vectorized[idx] = float('nan')
-                    else:
-                        vectorized[idx] = query[0] + 1
-                return vectorized
-            elif strategy == 'pad_with':
-                vectorized = (np.ones(max(len(string.split(' ')), seq_length)) * pad_with)
-                for idx, word in enumerate(string.split(' ')):
-                    query = self.Data.query(f'word == "{word}"').color.values
-                    if len(query) == 0:
-                        vectorized[idx] = float('nan')
-                    else:
-                        vectorized[idx] = query[0] + 1
-                return vectorized
-            else:
-                raise BadStrategy('bad strategy')
-        elif type(string) in [list, np.ndarray, pd.Series]:
-
-            if strategy == 'pad_with':
-
-                vectorized = (np.ones(len(string), max(len(string), seq_length)) * pad_with)
-
-                for kdx, sentence in enumerate(string):
-                    for idx, word in enumerate(sentence.split(' ')):
+        if method == 'chromatic':
+            if type(string) == str:
+                if strategy is None:
+                    vectorized = np.zeros(len(string))
+                    for idx, word in enumerate(string.split(' ')):
                         query = self.Data.query(f'word == "{word}"').color.values
                         if len(query) == 0:
-                            vectorized[kdx, idx] = float('nan')
+                            vectorized[idx] = float('nan')
                         else:
-                            vectorized[kdx, idx] = query[0] + 1
-                return vectorized
-            else:
-                raise BadStrategy('bad strategy')
+                            vectorized[idx] = query[0] + 1
+                    return vectorized
+                elif strategy == 'pad_with':
+                    vectorized = (np.ones(max(len(string.split(' ')), seq_length)) * pad_with)
+                    for idx, word in enumerate(string.split(' ')):
+                        query = self.Data.query(f'word == "{word}"').color.values
+                        if len(query) == 0:
+                            vectorized[idx] = float('nan')
+                        else:
+                            vectorized[idx] = query[0] + 1
+                    return vectorized
+                else:
+                    raise NotImplementedError('bad strategy')
+            elif type(string) in [list, np.ndarray, pd.Series]:
+
+                if strategy == 'pad_with':
+
+                    vectorized = (np.ones(len(string), max(len(string), seq_length)) * pad_with)
+
+                    for kdx, sentence in enumerate(string):
+                        for idx, word in enumerate(sentence.split(' ')):
+                            query = self.Data.query(f'word == "{word}"').color.values
+                            if len(query) == 0:
+                                vectorized[kdx, idx] = float('nan')
+                            else:
+                                vectorized[kdx, idx] = query[0] + 1
+                    return vectorized
+                else:
+                    raise NotImplementedError('bad strategy')
 
 
-    else:
-        raise NameError('Bad Method')
+        else:
+            raise NameError('Bad Method')
 
     def dump(self):
         """
